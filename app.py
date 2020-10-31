@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from routes import breaches
 app = Flask(__name__)
 
-@app.route('/breaches/<user_email>')
+@app.route('/breaches/<user_email>', methods=['GET'])
 def find_user_breaches(user_email):
     response = breaches.get_all_breaches_for_user(user_email)
     return jsonify(response)
