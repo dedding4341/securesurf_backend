@@ -14,7 +14,7 @@ def get_monthly_analytics():
 
     
 
-@app.route('/url_analysis', methods=['GET'])
+@app.route('/url_analysis', methods=['POST'])
 def analyze_url():
     request_content = request.get_json(silent=False)
     print(request)
