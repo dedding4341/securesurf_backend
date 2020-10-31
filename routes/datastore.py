@@ -164,7 +164,7 @@ def load_browsing_data(user_email, date_year_bucket):
     user_email = user_email.replace('.', '')
 
     data = db.child("users").child(user_email).child(date_year_bucket).get()
-    if not data:
+    if data == None:
         return []
     data_entries = []
     for entry in data.each():
