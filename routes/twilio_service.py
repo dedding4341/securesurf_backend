@@ -4,9 +4,8 @@ from .settings import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_NUMBER
 twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 
-def send_sms_message(to_number, visited_url, security_details):
+def send_sms_message(to_number, visited_url, security_details, user_name):
     # Potentially include IP?
-    user_name = None
     seperator = ' '
     platforms_string = seperator.join(security_details['platforms'])
     threats_string = seperator.join(security_details['threats'])

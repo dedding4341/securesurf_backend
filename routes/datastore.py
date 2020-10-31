@@ -83,7 +83,7 @@ def ack_breach(user_email, breach_name):
         acknowledged_names = acknowledged_data.val().get('breach_names', None)
     except:
         acknowledged_names = []
-        
+
     try:
         unacknowledged_names.remove(breach_name)
         acknowledged_names.append(breach_name)
@@ -160,3 +160,9 @@ def update_breach_watch_list(user_email, breach_watch_list):
             domain_names.append(breach_name)
     
     db.child("users").child(user_email).child("watch_list").set({'breach_watch_list': domain_names})
+
+def get_user(user_email):
+    user_email = user_email.replace('@', '')
+    user_email = user_email.replace('.', '')
+
+    return db.child("users").child(user_email).child("user_info").get().val()
