@@ -76,22 +76,26 @@ def ack_breach(user_email, breach_name):
         unacknowledged_data = db.child("users").child(user_email).child("unacknowledged").get()
         unacknowledged_names = unacknowledged_data.val().get('breach_names', None)
     except:
-        unacknowledged_names = None
+        unacknowledged_names = []
     
     try:
         acknowledged_data = db.child("users").child(user_email).child("acknowledged").get()
         acknowledged_names = acknowledged_data.val().get('breach_names', None)
     except:
-        acknowledged_names = None
-
+        acknowledged_names = []
+        
     try:
         unacknowledged_names.remove(breach_name)
         acknowledged_names.append(breach_name)
 
         db.child("users").child(user_email).child("unacknowledged").update({"breach_names": unacknowledged_names})
-        db.child("users").child(user_email).child("acknowledged").update({"breach_names": acknowledged_names})
+        print("h")
+        try:
+            db.child("users").child(user_email).child("acknowledged").update({"breach_names": acknowledged_names})
+        except:
+            db.child("users").child(user_email).child("acknowledged").set({"breach_names": acknowledged_names})
         return True
-    except:
+    except :
         return False
     
 def record_url_visit(user_email, url, remote_ip):
@@ -139,3 +143,20 @@ def set_user(user_email, first_name, phone):
     phone = "+1" + phone
 
     db.child("users").child(user_email).child("user_info").set({'first_name': first_name, 'phone': phone})
+
+def update_breach_watch_list(user_email, breach_watch_list):
+    # strip forbidden characters for DB interactions
+    user_email = user_email.replace('@', '')
+    user_email = user_email.replace('.', '')
+    
+    try:
+        breach_watch_list_data = db.child("users").child(user_email).child("watch_list").child("breach_watch_list").get()
+        domain_names = breach_watch_list_data.val().get('domain_names', None)
+    except:
+        domain_names = []
+
+    for breach_name in breach_watch_list:
+        if breach_name not in domain_names:
+            domain_names.append(breach_name)
+    
+    db.child("users").child(user_email).child("watch_list").set({'breach_watch_list': domain_names})

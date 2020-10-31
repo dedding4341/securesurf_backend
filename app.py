@@ -9,15 +9,42 @@ app = Flask(__name__)
 CORS(app, resources={r"//*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+@app.route('/update_breach_watch_list', methods=['POST'])
+def update_watch_list():
+    request_content = request.get_json(silent=False)
+
+    user_email = request_content.get('user_email', None)
+    breach_watch_list = request_content.get('breach_watch_list', None)
+
+    if not user_email:
+        response = {}
+        response['ERROR'] = 'No email found'
+        return jsonify(response)
+
+    if not breach_watch_list:
+        response = {}
+        response['ERROR'] = 'No updates found'
+        return jsonify(response)
+    
+    datastore.update_breach_watch_list(user_email, breach_watch_list)
+    return jsonify({"MESSAGE": "Checks out"})
+
+
 @app.route('/monthly_analytics_aggregated', methods=['POST'])
 def get_monthly_analytics_aggregated():
     request_content = request.get_json(silent=False)
 
     user_email = request_content.get('user_email', None)
+    month = request_content.get('month', None)
 
     if not user_email:
         response = {}
         response['ERROR'] = 'No email found'
+        return jsonify(response)
+
+    if not month:
+        response = {}
+        response['ERROR'] = 'No month found'
         return jsonify(response)
 
     aggregated_records = analytics.get_aggregated_records(user_email=user_email)
@@ -28,10 +55,16 @@ def get_monthly_analytics_detailed():
     request_content = request.get_json(silent=False)
 
     user_email = request_content.get('user_email', None)
+    month = request_content.get('month', None)
 
     if not user_email:
         response = {}
         response['ERROR'] = 'No email found'
+        return jsonify(response)
+
+    if not month:
+        response = {}
+        response['ERROR'] = 'No month found'
         return jsonify(response)
 
     detailed_records = analytics.get_detailed_records(user_email=user_email)
