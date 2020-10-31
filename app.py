@@ -4,6 +4,7 @@ from routes import breaches
 from routes import safebrowsing
 from routes import datastore
 from routes import analytics
+from routes import authflow
 app = Flask(__name__)
 
 CORS(app, resources={r"//*": {"origins": "*"}})
