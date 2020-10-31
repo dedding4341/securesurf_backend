@@ -7,6 +7,9 @@ def get_all_breaches_for_user(user_email):
     return build_detailed_breach_information(breach_service.getAllBreachesForAccount(email=user_email))
 
 def build_detailed_breach_information(breach_list):
+
+    # This needs to be run by acknowledged vs unacknowledged list in firebase
+
     detailed_breach_info = []
     for breach in breach_list:
         detailed_breach = breach_service.getSingleBreachedSite(name=breach['Name'])
