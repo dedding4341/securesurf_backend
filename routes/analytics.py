@@ -24,7 +24,7 @@ def get_aggregated_records(user_email, month):
 
 def get_detailed_records(user_email, month):
     dt_now = datetime.datetime.now(tz=timezone.utc)
-    date_year_bucket = f'{month_set}-{dt_now.year}'
+    date_year_bucket = f'{month}-{dt_now.year}'
 
     loaded_data = load_browsing_data(user_email=user_email, date_year_bucket=date_year_bucket)
     return loaded_data
