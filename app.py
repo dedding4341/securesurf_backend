@@ -119,7 +119,7 @@ def sign_up():
         response['ERROR'] = 'No password found'
         return jsonify(response)
 
-        request_content = request.get_json(silent=False)
+    request_content = request.get_json(silent=False)
     first_name = request_content.get('first_name', None)
 
     if not first_name:
@@ -139,7 +139,7 @@ def sign_up():
 
     return jsonify(response)
 
-@app.route('/sign_in', methods=['POST'])
+@app.route('/sign_in', methods=['GET'])
 def sign_in():
     request_content = request.get_json(silent=False)
     user_email = request_content.get('user_email', None)
@@ -157,6 +157,9 @@ def sign_in():
         response['ERROR'] = 'No password found'
         return jsonify(response)
     
+    ip = request.environ['REMOTE_ADDR']
+    datastore.log_ip(ip, user_email)
+
     response = authflow.sign_in_auth(user_email,password)
     return jsonify(response)
 
