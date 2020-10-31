@@ -6,6 +6,7 @@ from routes import datastore
 app = Flask(__name__)
 
 CORS(app, resources={r"//*": {"origins": "*"}})
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/monthly_analytics', methods=['GET'])
 def get_monthly_analytics():
