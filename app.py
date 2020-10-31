@@ -1,5 +1,19 @@
 from flask import Flask, request, jsonify
+from routes import breaches
 app = Flask(__name__)
+
+
+@app.route('/breaches', methods=['GET'])
+def find_user_breaches():
+    user_email = request.args.get('user_email', None)
+    
+    if not user_email:
+        response = {}
+        response['ERROR'] = 'No email found'
+        return jsonify(response)
+
+    response = breaches.get_all_breaches_for_user(user_email)
+    return jsonify(response)
 
 @app.route('/test_get/', methods=['GET'])
 def respond():
