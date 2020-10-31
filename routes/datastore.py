@@ -30,6 +30,10 @@ def load_compromised_sites(user_email, detailed_breach_info):
     except:
         unacknowledged_names = None
 
+    if (detailed_breach_info[0:3] == '404'):
+        return
+
+
     breach_names = []
 
     for breach in detailed_breach_info:
