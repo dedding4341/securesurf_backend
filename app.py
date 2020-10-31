@@ -7,9 +7,16 @@ app = Flask(__name__)
 
 CORS(app)
 
+@app.route('/monthly_analytics', methods=['GET'])
+def get_monthly_analytics():
+    request_content = request.get_json(silent=False)
+
+    
+
 @app.route('/url_analysis', methods=['GET'])
 def analyze_url():
     request_content = request.get_json(silent=False)
+    print(request_content)
 
     url = request_content.get('url', None)
     user_email = request_content.get('user_email', None)
