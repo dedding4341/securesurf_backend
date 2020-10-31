@@ -17,9 +17,6 @@ def get_monthly_analytics():
 @app.route('/url_analysis', methods=['POST'])
 def analyze_url():
     request_content = request.get_json(silent=False)
-    print(request)
-    print(request.__dict__)
-    print(request_content)
 
     url = request_content.get('url', None)
     user_email = request_content.get('user_email', None)
@@ -64,7 +61,7 @@ def acknowledge_breach():
     return jsonify(response)
 
 
-@app.route('/breaches', methods=['GET'])
+@app.route('/breaches', methods=['POST'])
 def find_user_breaches():
     request_content = request.get_json(silent=False)
 
@@ -104,7 +101,7 @@ def post():
             "ERROR": "No test param found"
         })
 
-@app.route('/sign_up', methods=['GET'])
+@app.route('/sign_up', methods=['POST'])
 def sign_up():
     request_content = request.get_json(silent=False)
     user_email = request_content.get('user_email', None)
@@ -125,7 +122,7 @@ def sign_up():
     response = authflow.sign_up_auth(user_email,password)
     return jsonify(response)
 
-@app.route('/sign_in', methods=['GET'])
+@app.route('/sign_in', methods=['POST'])
 def sign_in():
     request_content = request.get_json(silent=False)
     user_email = request_content.get('user_email', None)
