@@ -164,6 +164,8 @@ def load_browsing_data(user_email, date_year_bucket):
     user_email = user_email.replace('.', '')
 
     data = db.child("users").child(user_email).child(date_year_bucket).get()
+    if not data:
+        return []
     data_entries = []
     for entry in data.each():
         data_entries.append((entry.val().get('url'), entry.val().get('timestamp'), entry.val().get('remote_ip')))
