@@ -8,7 +8,7 @@ from .location_service import location_check, get_offending_location
 firebase = pyrebase.initialize_app(FIREBASE_CONFIG)
 db = firebase.database()
 
-month_set = ['January', 'February', 'March', 'April', 'March', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+month_set = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 def load_compromised_sites(user_email, detailed_breach_info):
     acknowledged_data = None
@@ -153,7 +153,7 @@ def record_url_visit(user_email, url, remote_ip):
     dt_now = datetime.datetime.now(tz=timezone.utc)
     date_year_bucket = f'{month_set[dt_now.month - 1]}-{dt_now.year}'
 
-    db.child("users").child(user_email).child(date_year_bucket).push({"url": url, "timestamp": dt_now.strftime("%m/%d/%Y, %H:%M:%S"), "remote_ip": remote_ip})
+    db.child("users").child(user_email).child(date_year_bucket).update({"url": url, "timestamp": dt_now.strftime("%m/%d/%Y, %H:%M:%S"), "remote_ip": remote_ip})
 
 def load_browsing_data(user_email, date_year_bucket):
     user_email = user_email.replace('@', '')
