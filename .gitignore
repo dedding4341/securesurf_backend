@@ -8,6 +8,8 @@ __pycache__/
 
 # Settings
 /settings.py
+./settings.py
+settings.py
 
 # Distribution / packaging
 .Python
