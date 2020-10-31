@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, json
 from flask_cors import CORS
 from routes import breaches
 from routes import safebrowsing
+from routes import datastore
 app = Flask(__name__)
 
 CORS(app)
@@ -26,10 +27,36 @@ def analyze_url():
     response = safebrowsing.safety_analysis(user_email=user_email, visited_url=url)
     return jsonify(response)
 
+@app.route('/ack_breach', methods=['POST'])
+def acknowledge_breach():
+    request_content = request.get_json(silent=False)
+
+    user_email = request_content.get('user_email', None)
+    breach_name = request_content.get('breach_name', None)
+
+    if not user_email:
+        response = {}
+        response['ERROR'] = 'No email found'
+        return jsonify(response)
+
+    if not breach_name:
+        response = {}
+        response['ERROR'] = 'No breach name found'
+        return jsonify(response)
+
+    result = datastore.ack_breach(user_email=user_email, breach_name=breach_name)
+    if result:
+        response = {}
+        response['MESSAGE'] = 'Acknowledgement received'
+        return jsonify(response)
+    response = {}
+    response['ERROR'] = 'Acknowledgement received, but error occurred'
+    return jsonify(response)
+
+
 @app.route('/breaches', methods=['GET'])
 def find_user_breaches():
     request_content = request.get_json(silent=False)
-    print(request_content)
 
     user_email = request_content.get('user_email', None)
     
