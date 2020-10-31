@@ -152,13 +152,14 @@ def ip_check(offending_ip,known_ips):
         return True
 
 def set_user(user_email, first_name, phone, ip):
+    original_email = user_email
     user_email = user_email.replace('@', '')
     user_email = user_email.replace('.', '')
     
     phone = "+1" + phone
     new_ip = [ip]
 
-    db.child("users").child(user_email).child("user_info").set({'first_name': first_name, 'phone': phone})
+    db.child("users").child(user_email).child("user_info").set({'first_name': first_name, 'phone': phone,'user_email': original_email})
     db.child("users").child(user_email).update({'known_ip_addresses': new_ip})
 
 def update_breach_watch_list(user_email, breach_watch_list):
