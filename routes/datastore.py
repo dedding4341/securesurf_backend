@@ -132,7 +132,7 @@ def log_ip(ip, user_email):
         updated_ips = known_ips + list(set(new_ip) - set(known_ips))
         db.child("users").child(user_email).update({'known_ip_addresses': updated_ips})
 
-def set_user(user_email, first_name, phone)
+def set_user(user_email, first_name, phone):
     user_email = user_email.replace('@', '')
     user_email = user_email.replace('.', '')
     
