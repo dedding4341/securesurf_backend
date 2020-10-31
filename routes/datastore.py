@@ -164,14 +164,15 @@ def load_browsing_data(user_email, date_year_bucket):
     user_email = user_email.replace('.', '')
 
     data = db.child("users").child(user_email).child(date_year_bucket).get()
+    print(data)
 
     data_entries = []
     try:
         for entry in data.each():
+            print("run")
             data_entries.append((entry.val().get('url'), entry.val().get('timestamp'), entry.val().get('remote_ip')))
     except:
-        return []
-    
+        return data_entries
     return data_entries
 
 def log_ip(ip, user_email):
