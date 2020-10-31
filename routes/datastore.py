@@ -1,8 +1,12 @@
 import pyrebase
 from .settings import FIREBASE_CONFIG
+import datetime
+from datetime import timezone
 
 firebase = pyrebase.initialize_app(FIREBASE_CONFIG)
 db = firebase.database()
+
+month_set = ['January', 'February', 'March', 'April', 'March', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 def load_compromised_sites(user_email, detailed_breach_info):
     acknowledged_data = None
@@ -90,4 +94,11 @@ def ack_breach(user_email, breach_name):
     except:
         return False
     
-    
+def record_url_visit(user_email, url):
+    user_email = user_email.replace('@', '')
+    user_email = user_email.replace('.', '')
+
+    dt_now = datetime.datetime.now(tz=timezone.utc)
+    date_year_bucket = f'{month_set[dt_now.month - 1]}-{dt_now.year}'
+
+    db.child("users").child(user_email).child(date_year_bucket).push({"url": url, "timestamp": dt_now.strftime("%m/%d/%Y, %H:%M:%S")})
