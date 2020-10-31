@@ -1,6 +1,6 @@
 import pyrebase
-from .settings import FIREBASE_CONFIG\
-import .datastore
+from .settings import FIREBASE_CONFIG
+from .datastore import set_user
 
 firebase = pyrebase.initialize_app(FIREBASE_CONFIG)
 auth = firebase.auth()
@@ -25,7 +25,7 @@ def sign_up_auth(user_email,password,first_name,phone):
         response = {}
         response['ERROR'] = 'Email already exists'
     
-    datast
+    set_user(user_email,first_name,phone)
 
     return response
 
