@@ -1,4 +1,4 @@
-from settings import HIBP_KEY
+from .settings import HIBP_KEY
 import pypwned as breach_service
 
 breach_service = breach_service.pwned(HIBP_KEY)
