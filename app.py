@@ -15,8 +15,6 @@ app = Flask(__name__)
 CORS(app, resources={r"//*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-
-
 scheduler = BackgroundScheduler()
 scheduler.start()
 scheduler.add_job(
@@ -26,8 +24,6 @@ scheduler.add_job(
     name='Poll All',
     replace_existing=True)
 atexit.register(lambda: scheduler.shutdown())
-
-
 
 @app.route('/update_breach_watch_list', methods=['POST'])
 def update_watch_list():
@@ -213,10 +209,9 @@ def sign_up():
         return jsonify(response)
 
     ip = request.environ['REMOTE_ADDR']
-
     response = authflow.sign_up_auth(user_email,password,first_name,phone,ip)
 
-    return response
+    return jsonify(response)
 
 @app.route('/sign_in', methods=['POST'])
 def sign_in():
@@ -240,7 +235,7 @@ def sign_in():
     datastore.log_ip(ip, user_email)
     
     response = authflow.sign_in_auth(user_email,password)
-    return response
+    return jsonify(response)
 
 @app.route('/')
 def index():
