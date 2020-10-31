@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, json
 from flask_cors import CORS
 from routes import breaches
 from routes import safebrowsing
@@ -8,8 +8,10 @@ CORS(app)
 
 @app.route('/url_analysis', methods=['GET'])
 def analyze_url():
-    url = request.args.get('url', None)
-    user_email = request.args.get('user_email', None)
+    request_content = request.get_json(silent=False)
+
+    url = request_content.get('url', None)
+    user_email = request_content.get('user_email', None)
     
     if not url:
         response = {}
@@ -26,7 +28,10 @@ def analyze_url():
 
 @app.route('/breaches', methods=['GET'])
 def find_user_breaches():
-    user_email = request.args.get('user_email', None)
+    request_content = request.get_json(silent=False)
+    print(request_content)
+
+    user_email = request_content.get('user_email', None)
     
     if not user_email:
         response = {}
