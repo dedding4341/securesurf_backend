@@ -16,3 +16,12 @@ def send_sms_message(to_number, visited_url, security_details, user_name):
         from_=TWILIO_NUMBER,
         body=message_body
     )
+
+def send_sms_new_breach(to_number, user_name):
+     message_body=f'Hello {user_name}, this is a message from SecureSurf! \n \nThis message is to alert you that we have found a new breach that contains either your information or is associated with a URL you are tracking. Please login to the web portal to get more information.'
+     
+     message = twilio_client.messages.create(
+        to=to_number,
+        from_=TWILIO_NUMBER,
+        body=message_body
+    )

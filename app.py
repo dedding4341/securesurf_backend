@@ -5,10 +5,29 @@ from routes import safebrowsing
 from routes import datastore
 from routes import analytics
 from routes import authflow
+from routes.cron_tasks import poll_breaches_for_all_users
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+
 app = Flask(__name__)
 
 CORS(app, resources={r"//*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+
+
+scheduler = BackgroundScheduler()
+scheduler.start()
+scheduler.add_job(
+    func=poll_breaches_for_all_users,
+    trigger=IntervalTrigger(hours=3),
+    id='poll',
+    name='Poll All',
+    replace_existing=True)
+atexit.register(lambda: scheduler.shutdown())
+
+
 
 @app.route('/update_breach_watch_list', methods=['POST'])
 def update_watch_list():
@@ -48,7 +67,7 @@ def get_monthly_analytics_aggregated():
         response['ERROR'] = 'No month found'
         return jsonify(response)
 
-    aggregated_records = analytics.get_aggregated_records(user_email=user_email)
+    aggregated_records = analytics.get_aggregated_records(user_email=user_email, month=month)
     return jsonify(aggregated_records)
 
 @app.route('/monthly_analytics_detailed', methods=['POST'])
@@ -68,7 +87,7 @@ def get_monthly_analytics_detailed():
         response['ERROR'] = 'No month found'
         return jsonify(response)
 
-    detailed_records = analytics.get_detailed_records(user_email=user_email)
+    detailed_records = analytics.get_detailed_records(user_email=user_email, month=month)
     return jsonify(detailed_records)
 
 @app.route('/url_analysis', methods=['POST'])
@@ -226,5 +245,7 @@ def sign_in():
 def index():
     return "<h1>SecureSurf Backend Server</h1>"
 
+
 if __name__ == '__main__':
     app.run(threaded=True, port=5000)
+    atexit.register(lambda: scheduler.shutdown())

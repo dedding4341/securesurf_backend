@@ -2,6 +2,7 @@ import pyrebase
 from .settings import FIREBASE_CONFIG
 import datetime
 from datetime import timezone
+from .twilio_service import send_sms_new_breach
 
 firebase = pyrebase.initialize_app(FIREBASE_CONFIG)
 db = firebase.database()
@@ -47,6 +48,52 @@ def load_compromised_sites(user_email, detailed_breach_info):
     else:
         updated_names = unacknowledged_names + list(set(breach_names) - set(unacknowledged_names))
         db.child("users").child(user_email).child("unacknowledged").update({"breach_names": updated_names})
+
+def polling_load_compromised_sites(user_email, detailed_breach_info):
+    acknowledged_data = None
+    unacknowledged_data = None
+    
+    # strip forbidden characters for DB interactions
+    user_email = user_email.replace('@', '')
+    user_email = user_email.replace('.', '')
+
+    try:
+        acknowledged_data = db.child("users").child(user_email).child("acknowledged").get()
+        acknowledged_names = acknowledged_data.val().get('breach_names', None)
+    except:
+        acknowledged_names = None
+    
+    try:
+        unacknowledged_data = db.child("users").child(user_email).child("unacknowledged").get()
+        unacknowledged_names = unacknowledged_data.val().get('breach_names', None)
+    except:
+        unacknowledged_names = None
+    
+    if (detailed_breach_info[0:3] == '404'):
+        return
+
+    breach_names = []
+    
+    for breach in detailed_breach_info:
+        if acknowledged_names and breach['Name'] in acknowledged_names:
+            continue
+        elif unacknowledged_names and breach['Name'] in unacknowledged_names:
+            continue
+        else:
+            breach_names.append(breach['Name'])
+    
+    if len(breach_names) == 0:
+        return
+
+    
+    if not unacknowledged_names:
+        db.child("users").child(user_email).child("unacknowledged").set({"breach_names": breach_names})
+    else:
+        updated_names = unacknowledged_names + list(set(breach_names) - set(unacknowledged_names))
+        db.child("users").child(user_email).child("unacknowledged").update({"breach_names": updated_names})
+    user = get_user(user_email=user_email)
+
+    send_sms_new_breach(to_number=user.get('phone', None), user_name=user.get('first_name', None))
 
 def sanitize_return(user_email, detailed_breach_info):
     acknowledged_data = None
@@ -167,3 +214,16 @@ def get_user(user_email):
     user_email = user_email.replace('.', '')
 
     return db.child("users").child(user_email).child("user_info").get().val()
+
+def get_all_user_email():
+    user_ref = db.child("users").get()
+    all_user = []
+    for user in user_ref.each():
+        all_user.append(user.key())
+    
+    emails = []
+    for user in all_user:
+        user_email = db.child("users").child(user).child("user_info").get().val().get('user_email', None)
+        if user_email: 
+            emails.append(user_email)
+    return emails
