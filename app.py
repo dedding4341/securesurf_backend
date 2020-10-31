@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from routes import breaches
 from routes import safebrowsing
 app = Flask(__name__)
 
+CORS(app)
 
 @app.route('/url_analysis', methods=['GET'])
 def analyze_url():
