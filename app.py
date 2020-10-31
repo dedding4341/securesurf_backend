@@ -213,9 +213,10 @@ def sign_up():
         return jsonify(response)
 
     ip = request.environ['REMOTE_ADDR']
+
     response = authflow.sign_up_auth(user_email,password,first_name,phone,ip)
 
-    return jsonify(response)
+    return response
 
 @app.route('/sign_in', methods=['POST'])
 def sign_in():
@@ -239,7 +240,7 @@ def sign_in():
     datastore.log_ip(ip, user_email)
     
     response = authflow.sign_in_auth(user_email,password)
-    return jsonify(response)
+    return response
 
 @app.route('/')
 def index():

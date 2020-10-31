@@ -10,6 +10,8 @@ TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 TWILIO_NUMBER = os.getenv('TWILIO_NUMBER')
 
+IPINFO_ACCESS_TOKEN = os.getenv('IPINFO_ACCESS_TOKEN')
+
 FIREBASE_CONFIG = {
     'apiKey': os.getenv('API_KEY'),
     'authDomain': os.getenv('AUTH_DOMAIN'),
