@@ -97,6 +97,7 @@ def get_monthly_analytics_detailed():
 @app.route('/url_analysis', methods=['POST'])
 def analyze_url():
     request_content = request.get_json(silent=False)
+    print(request.__dict__)
 
     url = request_content.get('url', None)
     user_email = request_content.get('user_email', None)
