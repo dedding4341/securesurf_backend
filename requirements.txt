@@ -5,16 +5,12 @@ Flask==1.1.2
 gcloud==0.18.3
 googleapis-common-protos==1.52.0
 gunicorn==20.0.4
-<<<<<<< HEAD
 httplib2==0.18.1
-=======
->>>>>>> 0e89fd5c887a19cf4efd5cb68f2e64ca2af3ab62
 idna==2.10
 itsdangerous==1.1.0
 Jinja2==2.11.2
 jws==0.1.3
 MarkupSafe==1.1.1
-<<<<<<< HEAD
 oauth2client==4.1.2
 protobuf==3.13.0
 pyasn1==0.4.8
@@ -28,10 +24,5 @@ requests==2.24.0
 requests-toolbelt==0.9.1
 rsa==4.6
 six==1.15.0
-=======
-pypwned==1.0.0
-python-dotenv==0.15.0
-requests==2.24.0
->>>>>>> 0e89fd5c887a19cf4efd5cb68f2e64ca2af3ab62
 urllib3==1.25.11
 Werkzeug==1.0.1
