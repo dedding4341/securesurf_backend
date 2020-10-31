@@ -7,10 +7,11 @@ auth = firebase.auth()
 
 def sign_in_auth(user_email, password):
     try:
-        auth.sign_in_with_email_and_password(user_email, password)
-        response = {}
-        response['MESSAGE'] = 'Sign In Successful'
-        return response
+        user = auth.sign_in_with_email_and_password(user_email, password)
+        jwt = {}
+        jwt = user['idToken'] 
+        
+        return jwt
     except:
         response = {}
         response['ERROR'] = 'Invalid email/password combination'
@@ -18,14 +19,14 @@ def sign_in_auth(user_email, password):
 
 def sign_up_auth(user_email,password,first_name,phone,ip):  
     try:
-        auth.create_user_with_email_and_password(user_email, password)
-        response = {}
-        response['MESSAGE'] = 'Sign Up Successful'
+        user = auth.create_user_with_email_and_password(user_email, password)
+        jwt = {}
+        jwt = user['idToken'] 
+
+        set_user(user_email,first_name,phone,ip)
+
+        return jwt
     except:
         response = {}
         response['ERROR'] = 'Email already exists'
-    
-    set_user(user_email,first_name,phone,ip)
-
-    return response
-
+        return response
