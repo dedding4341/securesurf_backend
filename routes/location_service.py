@@ -9,3 +9,7 @@ def location_check(offending_ip, trusted_ip):
 
     if in_details.region == trusted_details.region:
         return True
+
+def get_offending_location(offending_ip):
+    in_details = handler.getDetails(offending_ip)
+    return (in_details.city, in_details.region)

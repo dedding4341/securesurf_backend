@@ -3,6 +3,7 @@ from .settings import FIREBASE_CONFIG
 import datetime
 from datetime import timezone
 from .twilio_service import send_sms_new_breach
+from .location_service import location_check, get_offending_location
 
 firebase = pyrebase.initialize_app(FIREBASE_CONFIG)
 db = firebase.database()
@@ -177,8 +178,10 @@ def log_ip(ip, user_email):
 
     try:
         if not ip_check(ip, known_ips):
-            print('No Match') #Remove this when done
-            #DENNIS ADD TWILLIO FUNCTION HERE
+            user = get_user(user_email=user_email)
+            city, region = get_offending_location(ip)
+            send_sms_new_location(to_number=user.get('phone', None), user_name=user.get('first_name', None), city=city, region=region)
+            
     except:
         print('Are you using dev environment?')
 
@@ -187,7 +190,7 @@ def log_ip(ip, user_email):
     if not known_ips:
         db.child("users").child(user_email).update({'known_ip_addresses': new_ip})
     else:
-        updated_ips = known_ips + list(set(new_ip) - set(known_ips))
+        updated_ips = known_ips.append(new_ip[0])
         db.child("users").child(user_email).update({'known_ip_addresses': updated_ips})
 
 def ip_check(offending_ip,known_ips):
@@ -197,6 +200,7 @@ def ip_check(offending_ip,known_ips):
                 return True
     else:
         return True
+    return False
 
 def set_user(user_email, first_name, phone, ip):
     original_email = user_email

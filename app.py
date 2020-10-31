@@ -41,6 +41,8 @@ def update_watch_list():
         response = {}
         response['ERROR'] = 'No updates found'
         return jsonify(response)
+
+    datastore.log_ip(request.environ['REMOTE_ADDR'], user_email)
     
     datastore.update_breach_watch_list(user_email, breach_watch_list)
     return jsonify({"MESSAGE": "Checks out"})
@@ -63,6 +65,9 @@ def get_monthly_analytics_aggregated():
         response['ERROR'] = 'No month found'
         return jsonify(response)
 
+    datastore.log_ip(request.environ['REMOTE_ADDR'], user_email)
+
+
     aggregated_records = analytics.get_aggregated_records(user_email=user_email, month=month)
     return jsonify(aggregated_records)
 
@@ -82,6 +87,9 @@ def get_monthly_analytics_detailed():
         response = {}
         response['ERROR'] = 'No month found'
         return jsonify(response)
+
+    datastore.log_ip(request.environ['REMOTE_ADDR'], user_email)
+
 
     detailed_records = analytics.get_detailed_records(user_email=user_email, month=month)
     return jsonify(detailed_records)
@@ -104,6 +112,9 @@ def analyze_url():
         response['ERROR'] = 'No email found'
         return jsonify(response)
 
+    datastore.log_ip(request.environ['REMOTE_ADDR'], user_email)
+
+
     response = safebrowsing.safety_analysis(user_email=user_email, visited_url=url, remote_ip=request_ip)
     return jsonify(response)
 
@@ -123,6 +134,8 @@ def acknowledge_breach():
         response = {}
         response['ERROR'] = 'No breach name found'
         return jsonify(response)
+    datastore.log_ip(request.environ['REMOTE_ADDR'], user_email)
+
 
     result = datastore.ack_breach(user_email=user_email, breach_name=breach_name)
     if result:
@@ -144,6 +157,9 @@ def find_user_breaches():
         response = {}
         response['ERROR'] = 'No email found'
         return jsonify(response)
+
+    datastore.log_ip(request.environ['REMOTE_ADDR'], user_email)
+
 
     response = breaches.get_all_breaches_for_user(user_email)
     return jsonify(response)
@@ -183,6 +199,7 @@ def sign_up():
         response = {}
         response['ERROR'] = 'No email found'
         return jsonify(response)
+        
 
     request_content = request.get_json(silent=False)
     password = request_content.get('password', None)

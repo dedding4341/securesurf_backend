@@ -25,3 +25,12 @@ def send_sms_new_breach(to_number, user_name):
         from_=TWILIO_NUMBER,
         body=message_body
     )
+
+def send_sms_new_location(to_number, user_name, city, region):
+    message_body=f'Hello {user_name}, this is a message from SecureSurf! \n \nThis message is to alert you that we have found a session of browsing in your account in a location that you normally do not surf from ({city}, {region}).'
+
+    message = twilio_client.messages.create(
+        to=to_number,
+        from_=TWILIO_NUMBER,
+        body=message_body
+    )
