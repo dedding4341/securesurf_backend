@@ -5,7 +5,7 @@ from routes import safebrowsing
 from routes import datastore
 app = Flask(__name__)
 
-CORS(app)
+CORS(app, resources={r"//*": {"origins": "*"}})
 
 @app.route('/monthly_analytics', methods=['GET'])
 def get_monthly_analytics():
