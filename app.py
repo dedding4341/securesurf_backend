@@ -143,7 +143,23 @@ def sign_up():
         response['ERROR'] = 'No password found'
         return jsonify(response)
 
-    response = authflow.sign_up_auth(user_email,password)
+    request_content = request.get_json(silent=False)
+    first_name = request_content.get('first_name', None)
+
+    if not first_name:
+        response = {}
+        response['ERROR'] = 'No first name found'
+        return jsonify(response)
+
+    request_content = request.get_json(silent=False)
+    phone = request_content.get('phone', None)
+
+    if not phone:
+        response = {}
+        response['ERROR'] = 'No phone number found'
+        return jsonify(response)
+
+    response = authflow.sign_up_auth(user_email,password,first_name,phone)
     return jsonify(response)
 
 @app.route('/sign_in', methods=['POST'])
@@ -163,6 +179,9 @@ def sign_in():
         response = {}
         response['ERROR'] = 'No password found'
         return jsonify(response)
+
+    ip = request.environ['REMOTE_ADDR']
+    datastore.log_ip(ip, user_email)
     
     response = authflow.sign_in_auth(user_email,password)
     return jsonify(response)
