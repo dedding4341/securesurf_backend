@@ -3,14 +3,39 @@ from flask_cors import CORS
 from routes import breaches
 from routes import safebrowsing
 from routes import datastore
+from routes import analytics
 app = Flask(__name__)
 
 CORS(app, resources={r"//*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-@app.route('/monthly_analytics', methods=['GET'])
-def get_monthly_analytics():
+@app.route('/monthly_analytics_aggregated', methods=['POST'])
+def get_monthly_analytics_aggregated():
     request_content = request.get_json(silent=False)
+
+    user_email = request_content.get('user_email', None)
+
+    if not user_email:
+        response = {}
+        response['ERROR'] = 'No email found'
+        return jsonify(response)
+
+    aggregated_records = analytics.get_aggregated_records(user_email=user_email)
+    return jsonify(aggregated_records)
+
+@app.route('/monthly_analytics_detailed', methods=['POST'])
+def get_monthly_analytics_detailed():
+    request_content = request.get_json(silent=False)
+
+    user_email = request_content.get('user_email', None)
+
+    if not user_email:
+        response = {}
+        response['ERROR'] = 'No email found'
+        return jsonify(response)
+
+    detailed_records = analytics.get_detailed_records(user_email=user_email)
+    return jsonify(detailed_records)
 
     
 
@@ -20,6 +45,7 @@ def analyze_url():
 
     url = request_content.get('url', None)
     user_email = request_content.get('user_email', None)
+    request_ip = request.environ['REMOTE_ADDR']
     
     if not url:
         response = {}
@@ -31,7 +57,7 @@ def analyze_url():
         response['ERROR'] = 'No email found'
         return jsonify(response)
 
-    response = safebrowsing.safety_analysis(user_email=user_email, visited_url=url)
+    response = safebrowsing.safety_analysis(user_email=user_email, visited_url=url, remote_ip=request_ip)
     return jsonify(response)
 
 @app.route('/ack_breach', methods=['POST'])

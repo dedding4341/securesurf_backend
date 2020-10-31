@@ -5,9 +5,9 @@ from .datastore import record_url_visit
 
 site_safety_service = SafeBrowsing(SAFE_BROWSING_KEY)
 
-def safety_analysis(user_email, visited_url):
+def safety_analysis(user_email, visited_url, remote_ip):
     # Record webpage habit here ?
-    record_url_visit(user_email=user_email, url=visited_url)
+    record_url_visit(user_email=user_email, url=visited_url, remote_ip=remote_ip)
     results = site_safety_service.lookup_url(visited_url)
 
     if results['malicious']:

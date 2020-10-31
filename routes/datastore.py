@@ -94,11 +94,22 @@ def ack_breach(user_email, breach_name):
     except:
         return False
     
-def record_url_visit(user_email, url):
+def record_url_visit(user_email, url, remote_ip):
     user_email = user_email.replace('@', '')
     user_email = user_email.replace('.', '')
 
     dt_now = datetime.datetime.now(tz=timezone.utc)
     date_year_bucket = f'{month_set[dt_now.month - 1]}-{dt_now.year}'
 
-    db.child("users").child(user_email).child(date_year_bucket).push({"url": url, "timestamp": dt_now.strftime("%m/%d/%Y, %H:%M:%S")})
+    db.child("users").child(user_email).child(date_year_bucket).push({"url": url, "timestamp": dt_now.strftime("%m/%d/%Y, %H:%M:%S"), "remote_ip": remote_ip})
+
+def load_browsing_data(user_email, date_year_bucket):
+    user_email = user_email.replace('@', '')
+    user_email = user_email.replace('.', '')
+
+    data = db.child("users").child(user_email).child(date_year_bucket).get()
+    data_entries = []
+    for entry in data.each():
+        data_entries.append((entry.val().get('url'), entry.val().get('timestamp'), entry.val().get('remote_ip')))
+    
+    return data_entries
