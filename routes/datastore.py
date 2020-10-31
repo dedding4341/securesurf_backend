@@ -259,3 +259,52 @@ def get_all_user_email():
         if user_email: 
             emails.append(user_email)
     return emails
+
+def increment_monthly_safe(user_email):
+    user_email = user_email.replace('@', '')
+    user_email = user_email.replace('.', '')
+
+    dt_now = datetime.datetime.now(tz=timezone.utc)
+    date_year_bucket_safe = f'{month_set[dt_now.month - 1]}-{dt_now.year}-safe'
+
+    try:
+        data = db.child("users").child(user_email).child(date_year_bucket_safe).get().val().get('occurances')
+        db.child("users").child(user_email).child(date_year_bucket_safe).update({"occurances": data + 1})
+
+    except:
+        db.child("users").child(user_email).child(date_year_bucket_safe).set({"occurances": 1})
+
+
+def increment_monthly_unsafe(user_email):
+    user_email = user_email.replace('@', '')
+    user_email = user_email.replace('.', '')
+
+    dt_now = datetime.datetime.now(tz=timezone.utc)
+    date_year_bucket_unsafe = f'{month_set[dt_now.month - 1]}-{dt_now.year}-unsafe'
+
+    try:
+        data = db.child("users").child(user_email).child(date_year_bucket_unsafe).get().val().get('occurances')
+        db.child("users").child(user_email).child(date_year_bucket_unsafe).update({"occurances": data + 1})
+
+    except:
+        db.child("users").child(user_email).child(date_year_bucket_unsafe).set({"occurances": 1})
+
+def get_monthly_counts(user_email):
+    user_email = user_email.replace('@', '')
+    user_email = user_email.replace('.', '')
+
+    dt_now = datetime.datetime.now(tz=timezone.utc)
+    date_year_bucket_safe = f'{month_set[dt_now.month - 1]}-{dt_now.year}-safe'
+    date_year_bucket_unsafe = f'{month_set[dt_now.month - 1]}-{dt_now.year}-unsafe'
+
+    try:
+        data_unsafe = db.child("users").child(user_email).child(date_year_bucket_unsafe).get().val().get('occurances')
+    except:
+        data_unsafe = 0
+
+    try:
+        data_safe = db.child("users").child(user_email).child(date_year_bucket_safe).get().val().get('occurances')
+    except:
+        data_safe = 0
+
+    return [data_safe, data_unsafe]

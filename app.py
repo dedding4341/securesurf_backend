@@ -25,6 +25,20 @@ scheduler.add_job(
     replace_existing=True)
 atexit.register(lambda: scheduler.shutdown())
 
+@app.route('/get_monthly_danger_counts', methods=['POST'])
+def get_danger_counts():
+    request_content = request.get_json(silent=False)
+
+    user_email = request_content.get('user_email', None)
+
+    if not user_email:
+        response = {}
+        response['ERROR'] = 'No email found'
+        return jsonify(response)
+
+    counts = datastore.get_monthly_counts(user_email=user_email)
+    return jsonify(counts)
+
 @app.route('/update_breach_watch_list', methods=['POST'])
 def update_watch_list():
     request_content = request.get_json(silent=False)
