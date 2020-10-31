@@ -6,9 +6,9 @@ import re
 month_set = ['January', 'February', 'March', 'April', 'March', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 
-def get_aggregated_records(user_email):
+def get_aggregated_records(user_email, month):
     dt_now = datetime.datetime.now(tz=timezone.utc)
-    date_year_bucket = f'{month_set[dt_now.month - 1]}-{dt_now.year}'
+    date_year_bucket = f'{month}-{dt_now.year}'
 
     loaded_data = load_browsing_data(user_email=user_email, date_year_bucket=date_year_bucket)
 
@@ -22,9 +22,9 @@ def get_aggregated_records(user_email):
             result_dict[matcher.group(0)] += 1
     return result_dict
 
-def get_detailed_records(user_email):
+def get_detailed_records(user_email, month):
     dt_now = datetime.datetime.now(tz=timezone.utc)
-    date_year_bucket = f'{month_set[dt_now.month - 1]}-{dt_now.year}'
+    date_year_bucket = f'{month_set}-{dt_now.year}'
 
     loaded_data = load_browsing_data(user_email=user_email, date_year_bucket=date_year_bucket)
     return loaded_data
