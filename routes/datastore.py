@@ -187,6 +187,9 @@ def log_ip(ip, user_email):
 
     new_ip = [ip]
 
+    if len(new_ip) == 0:
+        return 
+
     if not known_ips:
         db.child("users").child(user_email).update({'known_ip_addresses': new_ip})
     else:
