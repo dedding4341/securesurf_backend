@@ -27,9 +27,6 @@ atexit.register(lambda: scheduler.shutdown())
 
 @app.route('/get_monthly_danger_counts', methods=['POST'])
 def get_danger_counts():
-    request_content = request.get_json(silent=False)
-
-    user_email = request_content.get('user_email', None)
 
     if not user_email:
         response = {}
@@ -56,6 +53,7 @@ def update_watch_list():
         response['ERROR'] = 'No updates found'
         return jsonify(response)
 
+    datastore.log_ip(request.environ['HTTP_X_FORWARDED_FOR'], user_email)
     
     datastore.update_breach_watch_list(user_email, breach_watch_list)
     return jsonify({"MESSAGE": "Checks out"})
@@ -78,6 +76,7 @@ def get_monthly_analytics_aggregated():
         response['ERROR'] = 'No month found'
         return jsonify(response)
 
+    datastore.log_ip(request.environ['HTTP_X_FORWARDED_FOR'], user_email)
 
 
     aggregated_records = analytics.get_aggregated_records(user_email=user_email, month=month)
@@ -100,6 +99,7 @@ def get_monthly_analytics_detailed():
         response['ERROR'] = 'No month found'
         return jsonify(response)
 
+    datastore.log_ip(request.environ['HTTP_X_FORWARDED_FOR'], user_email)
 
 
     detailed_records = analytics.get_detailed_records(user_email=user_email, month=month)
@@ -124,6 +124,7 @@ def analyze_url():
         response['ERROR'] = 'No email found'
         return jsonify(response)
 
+    datastore.log_ip(request.environ['HTTP_X_FORWARDED_FOR'], user_email)
 
 
     response = safebrowsing.safety_analysis(user_email=user_email, visited_url=url, remote_ip=request_ip)
@@ -145,6 +146,7 @@ def acknowledge_breach():
         response = {}
         response['ERROR'] = 'No breach name found'
         return jsonify(response)
+    datastore.log_ip(request.environ['HTTP_X_FORWARDED_FOR'], user_email)
 
 
     result = datastore.ack_breach(user_email=user_email, breach_name=breach_name)
@@ -168,6 +170,7 @@ def find_user_breaches():
         response['ERROR'] = 'No email found'
         return jsonify(response)
 
+    datastore.log_ip(request.environ['HTTP_X_FORWARDED_FOR'], user_email)
 
 
     response = breaches.get_all_breaches_for_user(user_email)
