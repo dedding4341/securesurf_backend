@@ -1,7 +1,26 @@
 from flask import Flask, request, jsonify
 from routes import breaches
+from routes import safebrowsing
 app = Flask(__name__)
 
+
+@app.route('/url_analysis', methods=['GET'])
+def analyze_url():
+    url = request.args.get('url', None)
+    user_email = request.args.get('user_email', None)
+    
+    if not url:
+        response = {}
+        response['ERROR'] = 'No url found'
+        return jsonify(response)
+
+    if not user_email:
+        response = {}
+        response['ERROR'] = 'No email found'
+        return jsonify(response)
+
+    response = safebrowsing.safety_analysis(user_email=user_email, visited_url=url)
+    return jsonify(response)
 
 @app.route('/breaches', methods=['GET'])
 def find_user_breaches():
