@@ -16,7 +16,7 @@ def sign_in_auth(user_email, password):
         response['ERROR'] = 'Invalid email/password combination'
         return response
 
-def sign_up_auth(user_email,password,first_name,phone):  
+def sign_up_auth(user_email,password,first_name,phone,ip):  
     try:
         auth.create_user_with_email_and_password(user_email, password)
         response = {}
@@ -25,7 +25,7 @@ def sign_up_auth(user_email,password,first_name,phone):
         response = {}
         response['ERROR'] = 'Email already exists'
     
-    set_user(user_email,first_name,phone)
+    set_user(user_email,first_name,phone,ip)
 
     return response
 

@@ -159,7 +159,9 @@ def sign_up():
         response['ERROR'] = 'No phone number found'
         return jsonify(response)
 
-    response = authflow.sign_up_auth(user_email,password,first_name,phone)
+    ip = request.environ['REMOTE_ADDR']
+    response = authflow.sign_up_auth(user_email,password,first_name,phone,ip)
+
     return jsonify(response)
 
 @app.route('/sign_in', methods=['POST'])
