@@ -113,7 +113,6 @@ def load_browsing_data(user_email, date_year_bucket):
         data_entries.append((entry.val().get('url'), entry.val().get('timestamp'), entry.val().get('remote_ip')))
     
     return data_entries
-    db.child("users").child(user_email).child(date_year_bucket).push({"url": url, "timestamp": dt_now.strftime("%m/%d/%Y, %H:%M:%S")})
 
 def log_ip(ip, user_email):
     user_email = user_email.replace('@', '')
