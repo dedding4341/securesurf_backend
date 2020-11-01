@@ -4,7 +4,7 @@ import datetime
 from datetime import timezone
 from .twilio_service import send_sms_new_breach
 from .location_service import location_check, get_offending_location
-import .ml_model as ml
+from .ml_model import load_data
 
 firebase = pyrebase.initialize_app(FIREBASE_CONFIG)
 db = firebase.database()
@@ -311,7 +311,6 @@ def get_monthly_counts(user_email):
 
     return [data_safe, data_unsafe]
 
-<<<<<<< HEAD
 
 def ingest_data(user_email, time_ms, url):
     original_email = user_email
@@ -327,8 +326,8 @@ def ingest_data(user_email, time_ms, url):
     for point in data.each():
         data_points.append((point.val().get('time_ms'), point.val().get('url')))
 
-    ml.load_data(user_email, data_points)
-=======
+    load_data(user_email, data_points)
+
 def get_breach_watch_list(user_email):
     user_email = user_email.replace('@', '')
     user_email = user_email.replace('.', '')
@@ -340,4 +339,3 @@ def get_breach_watch_list(user_email):
         response = {}
         response['MESSAGE'] = "Watchlist is empty"
         return response
->>>>>>> e1de8391260bc1fdfe889b19c1c1c45576039cab
