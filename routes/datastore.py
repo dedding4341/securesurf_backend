@@ -309,3 +309,15 @@ def get_monthly_counts(user_email):
         data_safe = 0
 
     return [data_safe, data_unsafe]
+
+def get_breach_watch_list(user_email):
+    user_email = user_email.replace('@', '')
+    user_email = user_email.replace('.', '')
+    
+    try:
+        breach_watch_list_data = db.child("users").child(user_email).child("watch_list").child("breach_watch_list").get().val()
+        return breach_watch_list_data
+    except:
+        response = {}
+        response['MESSAGE'] = "Watchlist is empty"
+        return response

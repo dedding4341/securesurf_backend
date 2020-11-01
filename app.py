@@ -266,6 +266,23 @@ def sign_in():
     response = authflow.sign_in_auth(user_email,password)
     return jsonify(response)
 
+@app.route('/get_breach_watch_list', methods=['POST'])
+def get_watch():
+    request_content = request.get_json(silent=False)
+
+    user_email = request_content.get('user_email', None)
+
+    if not user_email:
+        response = {}
+        response['ERROR'] = 'No email found'
+        return jsonify(response)
+
+    datastore.log_ip(request.environ['HTTP_X_FORWARDED_FOR'], user_email)
+
+    watch_list = datastore.get_breach_watch_list(user_email)
+
+    return jsonify(watch_list)
+
 @app.route('/')
 def index():
     return "<h1>SecureSurf Backend Server</h1>"
