@@ -25,9 +25,37 @@ scheduler.add_job(
     replace_existing=True)
 atexit.register(lambda: scheduler.shutdown())
 
+@app.route('/feed_data', methods=['POST'])
+def submit_ML_query():
+    request_content = request.get_json(silent=False)
+
+    user_email = request_content.get('user_email', None)
+    time_ms = request_content.get('time_ms', None)
+    url = request_content.get('url', None)
+
+    if not user_email:
+        response = {}
+        response['ERROR'] = 'No email found'
+        return jsonify(response)
+
+    if not time_ms:
+        response = {}
+        response['ERROR'] = 'No time_ms found'
+        return jsonify(response)
+
+    if not url:
+        response = {}
+        response['ERROR'] = 'No url found'
+        return jsonify(response)
+
+    datastore.ingest_data(user_email, time_ms, url)
+    return jsonify({"MESSAGE:":"Consumed"})
+
 @app.route('/get_monthly_danger_counts', methods=['POST'])
 def get_danger_counts():
+    request_content = request.get_json(silent=False)
 
+    user_email = request_content.get('user_email', None)
     if not user_email:
         response = {}
         response['ERROR'] = 'No email found'

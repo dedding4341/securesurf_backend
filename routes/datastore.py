@@ -4,6 +4,7 @@ import datetime
 from datetime import timezone
 from .twilio_service import send_sms_new_breach
 from .location_service import location_check, get_offending_location
+import .ml_model as ml
 
 firebase = pyrebase.initialize_app(FIREBASE_CONFIG)
 db = firebase.database()
@@ -309,3 +310,20 @@ def get_monthly_counts(user_email):
         data_safe = 0
 
     return [data_safe, data_unsafe]
+
+
+def ingest_data(user_email, time_ms, url):
+    original_email = user_email
+    user_email = user_email.replace('@', '')
+    user_email = user_email.replace('.', '')
+    db.child("users").child(user_email).child("ml_model_data").push({'time_ms': time_ms, 'url': url})
+
+
+    data = db.child("users").child(user_email).child("ml_model_data").get()
+
+    data_points = []
+
+    for point in data.each():
+        data_points.append((point.val().get('time_ms'), point.val().get('url')))
+
+    ml.load_data(user_email, data_points)
